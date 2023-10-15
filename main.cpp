@@ -13,6 +13,9 @@ int main() {
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
+
+        spaceship.Update();
+
         BeginDrawing();
         ClearBackground(grey);
         spaceship.Draw();

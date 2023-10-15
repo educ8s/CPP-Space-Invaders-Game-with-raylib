@@ -3,11 +3,7 @@
 
 Spaceship::Spaceship()
 {	
-  	position = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
-
-  // Load the spaceship image
   	image = LoadTexture("Graphics/spaceship.png");
-  	  // Calculate the position of the spaceship sprite at the middle of the bottom of the screen
   	position.x = (GetScreenWidth() - image.width) / 2.0f;
   	position.y = GetScreenHeight() - image.height;
 }
@@ -15,4 +11,21 @@ Spaceship::Spaceship()
 void Spaceship::Draw()
 {
   DrawTextureV(image, position, WHITE);
+}
+
+void Spaceship::Update()
+{
+	if (IsKeyDown(KEY_LEFT)) {
+    position.x -= 7.0f;
+  } else if (IsKeyDown(KEY_RIGHT)) {
+    position.x += 7.0f;
+  }
+
+  if (position.x >= GetScreenWidth() - image.width)
+  {
+  	position.x = GetScreenWidth() - image.width;
+  }else if (position.x < 0)
+  {
+  	position.x = 0;
+  }
 }
