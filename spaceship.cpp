@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include "spaceship.h"
+#include <iostream>
 
 Spaceship::Spaceship()
 {	
@@ -19,6 +20,9 @@ void Spaceship::Update()
     position.x -= 7.0f;
   } else if (IsKeyDown(KEY_RIGHT)) {
     position.x += 7.0f;
+  }else if(IsKeyDown(KEY_SPACE))
+  {
+    lasers.push_back(Laser({position.x + image.width/2 - 2, position.y}, -6));
   }
 
   if (position.x >= GetScreenWidth() - image.width)
@@ -28,4 +32,12 @@ void Spaceship::Update()
   {
   	position.x = 0;
   }
-}
+
+  for (auto it = lasers.begin(); it != lasers.end();) {
+        if (!it->active) {
+            it = lasers.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}  

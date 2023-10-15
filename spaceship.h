@@ -1,4 +1,6 @@
-# pragma once
+#pragma once
+#include <vector>
+#include "laser.h"
 
 class Spaceship {
 
@@ -8,8 +10,7 @@ public:
 	void Update();
 	void Draw();
 
+	std::vector<Laser> lasers;
 	Vector2 position;
 	Texture2D image;
-
-
 };

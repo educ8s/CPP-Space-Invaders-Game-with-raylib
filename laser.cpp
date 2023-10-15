@@ -8,11 +8,6 @@ Laser::Laser(Vector2 position, int speed)
 	this -> speed = speed;
 }
 
-Laser::~Laser()
-{
-	std::cout << "Killed Laser" << std::endl;
-}
-
 void Laser::Draw()
 {
 	if(active)
@@ -22,7 +17,7 @@ void Laser::Draw()
 void Laser::Update()
 {
 	if (active){
-		if (position.y > GetScreenHeight()) {
+		if (position.y > GetScreenHeight() or position.y < 0) {
 			active = false;
     
     		return;
