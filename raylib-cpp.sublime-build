@@ -1,0 +1,26 @@
+{
+	"selector" : "source.cpp",
+
+	"quiet": true,
+
+	"shell" : true,
+
+	"working_dir" : "$file_path",
+
+	"variants": [
+		{
+		"name": "Compile",
+		"cmd" : ["$file_path\\build.bat", "$file_name", "$file_base_name.exe"]
+		},
+
+		{
+		"name": "Compile & Run",
+		"cmd" : ["$file_path\\build.bat", "$file_name", "$file_base_name.exe", "&&", "$file_base_name.exe"], //, "&&", "$file_base_name.exe"
+		},
+
+		{
+		"name": "Release",
+		"cmd" : ["$file_path\\build.bat", "$file_name", "$file_base_name.exe", "Release"]
+		}
+	]
+}
