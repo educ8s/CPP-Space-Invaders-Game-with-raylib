@@ -1,17 +1,21 @@
 #include <raylib.h>
+#include "spaceship.h"
 
 int main() {
-    Color darkGreen = Color{20, 160, 183, 255};
+    Color grey = Color{29, 29, 27, 255};
 
-    int screenWidth = 800;
-    int screenHeight = 600;
+    int screenWidth = 750;
+    int screenHeight = 700;
 
-    InitWindow(screenWidth, screenHeight, "My first RAYLIB program!");
+    InitWindow(screenWidth, screenHeight, "C++ Space Invaders");
+
+    Spaceship spaceship = Spaceship();
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(darkGreen);
+        ClearBackground(grey);
+        spaceship.Draw();
         EndDrawing();
     }
     CloseWindow(); 
