@@ -13,4 +13,7 @@ public:
 	std::vector<Laser> lasers;
 	Vector2 position;
 	Texture2D image;
+
+private:
+	double lastFireTime;
 };
