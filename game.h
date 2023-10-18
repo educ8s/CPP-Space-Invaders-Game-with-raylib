@@ -11,4 +11,7 @@ public:
 	void Draw();
 	Spaceship spaceship;
 	std::vector<Obstacle> obstacles;
+
+private:
+	std::vector<Obstacle> CreateObstacles();
 };
