@@ -8,7 +8,7 @@ int main() {
     int windowHeight = 700;
     InitWindow(windowWidth, windowHeight, "C++ Space Invaders");
 
-    Game game = Game();
+    Game game;
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
