@@ -9,6 +9,7 @@ public:
 
 	void Update();
 	void Draw();
+	Rectangle getRect();
 
 	std::vector<Laser> lasers;
 	Vector2 position;

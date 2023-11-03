@@ -53,8 +53,6 @@ void Game::Update()
         mysteryShipSpawnInterval = GetRandomValue(10, 20);
     }
     DeleteInactiveLasers();
-
-    std::cout << "Alien Lasers:" << alienLasers.size() << std::endl;
 }
 
 void Game::Draw()
@@ -110,7 +108,7 @@ void Game::MoveAliens()
 {
 	for(Alien& alien: aliens)
 	{
-		alien.Update(aliens_direction);
+		
 		if(alien.position.x + alien.image.width > GetScreenWidth())
 		{
 			aliens_direction = -1;
@@ -121,8 +119,8 @@ void Game::MoveAliens()
 			aliens_direction = 1;
 			AliensMoveDown(4);
 		}
+		alien.Update(aliens_direction);
 	}
-
 }
 
 void Game::AliensMoveDown(int rows)
@@ -132,7 +130,6 @@ void Game::AliensMoveDown(int rows)
 		alien.position.y += rows;
 	}
 }
-
 
 void Game::AlienShootLaser()
 {
@@ -167,6 +164,8 @@ void Game::DeleteInactiveLasers()
 
 void Game::CheckForCollisions()
 {
+    
+	//Spaceship
     for (Laser& laser : spaceship.lasers)
     {
     	//Check for collisions Spaceship Laser & Aliens
@@ -220,6 +219,31 @@ void Game::CheckForCollisions()
         		{
         			it = obstacle.blocks.erase(it);
         			alienLaser.active = false;
+        		}else
+        		{
+        			it++;
+        		}
+        	}
+        }
+
+        if(CheckCollisionRecs(alienLaser.getRect(), spaceship.getRect()))
+        {
+        	alienLaser.active = false;
+        	std::cout << "Spaceship hit" << std::endl;
+        }
+    }
+
+    //Alien Collision with Obstacle
+    for(auto& alien: aliens)
+    {
+    	for(auto& obstacle: obstacles)
+        {
+        	auto it = obstacle.blocks.begin();
+        	while(it != obstacle.blocks.end())
+        	{
+        		if(CheckCollisionRecs(it->getRect(), alien.getRect()))
+        		{
+        			it = obstacle.blocks.erase(it);	
         		}else
         		{
         			it++;
