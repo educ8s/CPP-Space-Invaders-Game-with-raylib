@@ -6,7 +6,7 @@ int main() {
 
     int windowWidth = 750;
     int windowHeight = 700;
-    InitWindow(windowWidth, windowHeight, "C++ Space Invaders");
+    InitWindow(windowWidth, windowHeight, "C++ Space Invaders with raylib");
 
     Game game;
     SetTargetFPS(60);

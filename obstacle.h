@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Block.h"
 
 class Obstacle{
 
@@ -9,5 +10,6 @@ public:
 	int x;
 	int y;
 	std::vector<std::vector<int>> grid;
+	std::vector<Block> blocks;
 
 };

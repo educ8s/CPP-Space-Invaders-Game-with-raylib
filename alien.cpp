@@ -5,6 +5,7 @@ Alien::Alien(int type, int x, int y)
 	this -> type = type;
 	position.x = x;
 	position.y = y;
+	alive = true;
 
 	switch (type) {
 		case 1:
@@ -24,5 +25,15 @@ Alien::Alien(int type, int x, int y)
 
 void Alien::Draw()
 {
-	DrawTextureV(image, position, WHITE);
+	if(alive)
+		DrawTextureV(image, position, WHITE);
+}
+
+void Alien::Update(int direction)
+{	
+	position.x += direction;
+}
+
+Rectangle Alien::getRect()  {
+    return { position.x, position.y, float(image.width), float(image.height) };
 }
