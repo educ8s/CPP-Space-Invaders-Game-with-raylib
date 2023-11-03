@@ -11,6 +11,8 @@ Game::Game()
 	aliens_direction = 1;
 	mysteryShipSpawnInterval = GetRandomValue(10, 20);
     timeSinceLastSpawn = 0.0f;
+    alienLaserShootInterval = 0.35;
+    timeSinceLastAlienLaser = 0.0f;
 }
 
 std::vector<Obstacle> Game::CreateObstacles()
@@ -50,6 +52,9 @@ void Game::Update()
         // Set a new random spawn interval
         mysteryShipSpawnInterval = GetRandomValue(10, 20);
     }
+    DeleteInactiveLasers();
+
+    std::cout << "Alien Lasers:" << alienLasers.size() << std::endl;
 }
 
 void Game::Draw()
@@ -131,11 +136,32 @@ void Game::AliensMoveDown(int rows)
 
 void Game::AlienShootLaser()
 {
-	if(!aliens.empty())
-	{
-		int randomIndex = GetRandomValue(0, aliens.size() - 1);
+	 // Get the current time in seconds
+    double currentTime = GetTime();
+
+    // Check if enough time has passed (alienLaserShootInterval) since the last shot
+    if (currentTime - timeSinceLastAlienLaser >= alienLaserShootInterval && !aliens.empty()) {
+        int randomIndex = GetRandomValue(0, aliens.size() - 1);
         Alien& randomAlien = aliens[randomIndex];
-        alienLasers.push_back(Laser(randomAlien.position, 6));
+        alienLasers.push_back(Laser({randomAlien.position.x + randomAlien.image.width/2 , randomAlien.position.y + randomAlien.image.height}, 6));
+
+        // Update the last shoot time
+        timeSinceLastAlienLaser = currentTime;
+    }
+}
+
+void Game::DeleteInactiveLasers()
+{
+	auto it = alienLasers.begin();
+	while(it != alienLasers.end())
+	{
+		if(it-> active == false)
+		{
+			it = alienLasers.erase(it);
+		}else
+		{
+			it++;
+		}
 	}
 }
 
@@ -181,4 +207,25 @@ void Game::CheckForCollisions()
                 laser.active = false;
             }
     }
+
+    //Alien Lasers
+    for(Laser& alienLaser: alienLasers)
+    {
+    	for(auto& obstacle: obstacles)
+        {
+        	auto it = obstacle.blocks.begin();
+        	while(it != obstacle.blocks.end())
+        	{
+        		if(CheckCollisionRecs(it->getRect(), alienLaser.getRect()))
+        		{
+        			it = obstacle.blocks.erase(it);
+        			alienLaser.active = false;
+        		}else
+        		{
+        			it++;
+        		}
+        	}
+        }
+    }
+
 }

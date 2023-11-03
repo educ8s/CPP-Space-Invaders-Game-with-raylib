@@ -27,7 +27,10 @@ private:
 	int aliens_direction;
 	void AliensMoveDown(int rows);
 	void CheckForCollisions();
+	void DeleteInactiveLasers();
 	float mysteryShipSpawnInterval;
-    float timeSinceLastSpawn;
+	float timeSinceLastSpawn;
+	float alienLaserShootInterval;
+    float timeSinceLastAlienLaser;
 
 };
