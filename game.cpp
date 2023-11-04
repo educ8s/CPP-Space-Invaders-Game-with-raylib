@@ -1,18 +1,64 @@
 #include "game.h"
 #include <iostream>
-#include <algorithm>
+#include <fstream>
 
 Game::Game()
 {
+	highscore = LoadHighscoreFromFile();
+	mysteryShipSpawnInterval = GetRandomValue(10, 20);
+    alienLaserShootInterval = 0.35;
+    
+    music = LoadMusicStream("Sounds/music.ogg");
+    PlayMusicStream(music);
+    explosionSound = LoadSound("Sounds/explosion.ogg");
+    InitGame();
+}
+
+Game::~Game()
+{
+	spaceship.Unload();
+    UnloadSound(explosionSound);
+    UnloadMusicStream(music);
+    CloseAudioDevice();
+}
+
+void Game::InitGame()
+{
+	score = 0;
 	spaceship = Spaceship();
 	mystery_ship = MysteryShip();
 	obstacles = CreateObstacles();
 	aliens = CreateAliens();
+	timeSinceLastSpawn = 0.0f;
+	timeSinceLastAlienLaser = 0.0f;
 	aliens_direction = 1;
-	mysteryShipSpawnInterval = GetRandomValue(10, 20);
-    timeSinceLastSpawn = 0.0f;
-    alienLaserShootInterval = 0.35;
-    timeSinceLastAlienLaser = 0.0f;
+	lives = 3;
+	run = true;
+}
+
+void Game::GameOver()
+{
+	run = false;
+}
+
+void Game::CheckForHighscore() {
+	if(score > highscore) {
+		highscore = score;
+		SaveHighscoreToFile(highscore);
+	}
+}
+
+void Game::HandleSpaceshipControls() {
+    // Check for key presses to control the spaceship
+    if (IsKeyDown(KEY_LEFT)) {
+        spaceship.MoveLeft();
+    } else if (IsKeyDown(KEY_RIGHT)) {
+        spaceship.MoveRight();
+    }
+    
+    if (IsKeyDown(KEY_SPACE)) {
+        spaceship.FireLaser();
+    }
 }
 
 std::vector<Obstacle> Game::CreateObstacles()
@@ -22,39 +68,54 @@ std::vector<Obstacle> Game::CreateObstacles()
 	for(int i=0; i < 4; i++)
 	{
 	 	int offset_x = (i + 1) * gap + i * obstacles_width;
-	 	obstacles.push_back(Obstacle(offset_x, GetScreenHeight() - 100));
+	 	obstacles.push_back(Obstacle(offset_x, GetScreenHeight() - 200));
 	}
 	return obstacles;
 }
 
 void Game::Update()
 {
-	spaceship.Update();
-    for(Laser& laser: spaceship.lasers){
-        laser.Update();
-    }
+	if(run){
+		HandleSpaceshipControls();
+		spaceship.Update();
+	    for(Laser& laser: spaceship.lasers){
+	        laser.Update();
+	    }
 
-    for(Laser& alienLaser: alienLasers)
-    	alienLaser.Update();
+	    for(Laser& alienLaser: alienLasers)
+	    	alienLaser.Update();
 
-    MoveAliens();
-    AlienShootLaser();
-    mystery_ship.Update();
-    CheckForCollisions();
+	    MoveAliens();
+	    AlienShootLaser();
+	    mystery_ship.Update();
+	    CheckForCollisions();
 
-    timeSinceLastSpawn += GetFrameTime();
+	    timeSinceLastSpawn += GetFrameTime();
 
-    // Check if it's time to spawn the MysteryShip
-    if (timeSinceLastSpawn >= mysteryShipSpawnInterval)
-    {
-        mystery_ship.Spawn();
-        timeSinceLastSpawn = 0.0f;
-        // Set a new random spawn interval
-        mysteryShipSpawnInterval = GetRandomValue(10, 20);
-    }
-    DeleteInactiveLasers();
+	    if (timeSinceLastSpawn >= mysteryShipSpawnInterval)
+	    {
+	        mystery_ship.Spawn();
+	        timeSinceLastSpawn = 0.0f;
+	        mysteryShipSpawnInterval = GetRandomValue(10, 20);
+	    }
+	    DeleteInactiveLasers();
+	}else
+	{
+		if (IsKeyDown(KEY_ENTER)) {
+			Reset();
+			InitGame();
+    	}
+  }
+	
 }
 
+void Game::Reset() {
+	spaceship.Reset();
+	aliens.clear();
+	alienLasers.clear();
+	obstacles.clear();
+}
+ 
 void Game::Draw()
 {
 	spaceship.Draw();
@@ -109,12 +170,12 @@ void Game::MoveAliens()
 	for(Alien& alien: aliens)
 	{
 		
-		if(alien.position.x + alien.image.width > GetScreenWidth())
+		if(alien.position.x + alien.image.width > GetScreenWidth() - 25)
 		{
 			aliens_direction = -1;
 			AliensMoveDown(4);
 		}
-		if(alien.position.x < 0)
+		if(alien.position.x < 25)
 		{
 			aliens_direction = 1;
 			AliensMoveDown(4);
@@ -174,8 +235,21 @@ void Game::CheckForCollisions()
         {
             if (CheckCollisionRecs(it->getRect(), laser.getRect()))
             {
+            	if(it->type == 1)
+            	{
+            		score += 100;
+            		
+            	}else if(it -> type == 2)
+            	{
+            		score += 200;
+            	}else if(it -> type == 3)
+            	{
+            		score += 300;
+            	}
+            	CheckForHighscore();
                 it = aliens.erase(it); // Remove the alien
                 laser.active = false;  // Deactivate the laser
+                PlaySound(explosionSound);
             }
             else
             {
@@ -202,6 +276,8 @@ void Game::CheckForCollisions()
 
         if (CheckCollisionRecs(mystery_ship.getRect(), laser.getRect()))
             {
+            	score += 500;
+            	CheckForHighscore();
                 mystery_ship.alive = false;
                 laser.active = false;
             }
@@ -229,7 +305,10 @@ void Game::CheckForCollisions()
         if(CheckCollisionRecs(alienLaser.getRect(), spaceship.getRect()))
         {
         	alienLaser.active = false;
-        	std::cout << "Spaceship hit" << std::endl;
+        	lives --;
+        	if(lives == 0){
+        		GameOver();
+        	}
         }
     }
 
@@ -252,4 +331,39 @@ void Game::CheckForCollisions()
         }
     }
 
+    //Alien Collision with Spaceship
+    for(auto& alien: aliens)
+    {
+    	if(CheckCollisionRecs(alien.getRect(), spaceship.getRect()))
+    	{
+    		lives = 0;
+    		GameOver();
+    	}
+    }
+
+}
+
+void Game::SaveHighscoreToFile(int highscore) {
+    std::ofstream highscoreFile("highscore.txt");
+
+    if (highscoreFile.is_open()) {
+        highscoreFile << highscore;
+        highscoreFile.close();
+    } else {
+        std::cerr << "Failed to save highscore to file." << std::endl;
+    }
+}
+
+int Game::LoadHighscoreFromFile() {
+    int loadedHighscore = 0;  // Default highscore in case of errors
+
+    std::ifstream highscoreFile("highscore.txt");
+    if (highscoreFile.is_open()) {
+        highscoreFile >> loadedHighscore;
+        highscoreFile.close();
+    } else {
+        std::cerr << "Failed to load highscore from file." << std::endl;
+    }
+
+    return loadedHighscore;
 }

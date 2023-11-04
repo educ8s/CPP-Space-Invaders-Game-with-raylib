@@ -9,6 +9,11 @@ public:
 
 	void Update();
 	void Draw();
+	void Reset();
+	void MoveLeft();
+	void MoveRight();
+	void FireLaser();
+	void Unload();
 	Rectangle getRect();
 
 	std::vector<Laser> lasers;
@@ -17,4 +22,5 @@ public:
 
 private:
 	double lastFireTime;
+	Sound laserSound;
 };

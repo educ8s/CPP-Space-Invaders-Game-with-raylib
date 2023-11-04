@@ -11,14 +11,14 @@ void MysteryShip::Spawn()
 
     if (side == 0) {
         // Spawn on the left side
-        position.x = -image.width;
+        position.x = 25;
         speed = 3;
     } else {
         // Spawn on the right side
-        position.x = GetScreenWidth();
+        position.x = GetScreenWidth() - 25 - image.width;
         speed = -3;
     }
-    position.y = 50;
+    position.y = 90;
     alive = true;
 }
 
@@ -33,7 +33,7 @@ void MysteryShip::Update()
 	if(alive){
 		position.x += speed;
 
-		if(position.x > GetScreenWidth() || position.x < - image.width)
+		if(position.x > GetScreenWidth() - 25 - image.width || position.x < 25)
 			alive = false;
 	}
 }

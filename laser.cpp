@@ -17,9 +17,8 @@ void Laser::Draw()
 void Laser::Update()
 {
 	if (active){
-		if (position.y > GetScreenHeight() or position.y < 0) {
+		if (position.y > GetScreenHeight() - 100 or position.y < 0) {
 			active = false;
-    
     		return;
   		}
 	position.y += speed;
