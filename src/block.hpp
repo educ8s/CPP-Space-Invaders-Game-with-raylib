@@ -5,7 +5,7 @@ class Block {
     public:
         Block(Vector2 position);
         void Draw();
-        Rectangle GetRect();
+        Rectangle getRect();
     private:
         Vector2 position;
 };

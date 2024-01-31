@@ -1,12 +1,10 @@
 #pragma once
-#include "spaceship.h"
-#include <vector>
-#include "obstacle.h"
-#include "alien.h"
-#include "mysteryship.h"
+#include "spaceship.hpp"
+#include "obstacle.hpp"
+#include "alien.hpp"
+#include "mysteryship.hpp"
 
-class Game{
-
+class Game {
     public:
         Game();
         ~Game();
@@ -18,31 +16,29 @@ class Game{
         int score;
         int highscore;
         Music music;
-
     private:
+        void DeleteInactiveLasers();
         std::vector<Obstacle> CreateObstacles();
         std::vector<Alien> CreateAliens();
         void MoveAliens();
-        void MoveDownAliens(int distance);
+        void MoveDownAliens(int distance); 
         void AlienShootLaser();
-        void DeleteInactiveLasers();
         void CheckForCollisions();
         void GameOver();
-        void InitGame();
         void Reset();
-        void CheckForHighscore();
-        void SaveHighscoreToFile(int highscore);
-        int LoadHighscoreFromFile();
-
-        std::vector<Alien> aliens;
+        void InitGame();
+        void checkForHighscore();
+        void saveHighscoreToFile(int highscore);
+        int loadHighscoreFromFile();
         Spaceship spaceship;
         std::vector<Obstacle> obstacles;
-        std::vector<Laser> alienLasers;
-        MysteryShip mysteryShip;
+        std::vector<Alien> aliens;
         int aliensDirection;
+        std::vector<Laser> alienLasers;
         constexpr static float alienLaserShootInterval = 0.35;
-        float timeLastAlienLaserFired;
+        float timeLastAlienFired;
+        MysteryShip mysteryship;
         float mysteryShipSpawnInterval;
-	    float timeLastSpawn; 
+        float timeLastSpawn;
         Sound explosionSound;
 };

@@ -1,9 +1,10 @@
-#include "laser.h"
+#include "laser.hpp"
+#include <iostream>
 
 Laser::Laser(Vector2 position, int speed)
 {
     this -> position = position;
-	this -> speed = speed;
+    this -> speed = speed;
     active = true;
 }
 
@@ -12,7 +13,7 @@ void Laser::Draw() {
         DrawRectangle(position.x, position.y, 4, 15, {243, 216, 63, 255});
 }
 
-Rectangle Laser::GetRect()
+Rectangle Laser::getRect()
 {
     Rectangle rect;
     rect.x = position.x;
@@ -24,10 +25,9 @@ Rectangle Laser::GetRect()
 
 void Laser::Update() {
     position.y += speed;
-
-    if(active){
-        if(position.y > GetScreenHeight() - 100 || position.y < 25){
+    if(active) {
+        if(position.y > GetScreenHeight() - 100 || position.y < 25) {
             active = false;
-        } 
+        }
     }
 }
