@@ -15,5 +15,5 @@ For an in-depth tutorial on creating your own Space Invaders game using raylib, 
 <br>
 <p align="center">
 | 📺 <a href="https://www.youtube.com/channel/UC3ivOTE5EgpmF2DHLBmWIWg">My YouTube Channel</a>
-| 🌍 <a href="http://www.educ8s.tv">My Website</a> | <br>
+| 🌍 <a href="https://www.programmingwithnick.com">My Website</a> | <br>
 </p>
